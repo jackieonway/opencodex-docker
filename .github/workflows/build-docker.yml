@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: lidge-jun/opencodex
-          ref: ${{ github.ref_name }}  # 动态匹配你当前打的 Tag，或者改为 'dev'
+          ref: 'dev'  # 动态匹配你当前打的 Tag，或者改为 'dev'
           path: ./opencodex-src        # 存放到临时子目录中
 
       - name: Log in to the Container Registry
