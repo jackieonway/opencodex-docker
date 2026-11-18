@@ -1,26 +1,24 @@
-name: Build OpenCodex Docker
+name: Build and Push OpenCodex to GHCR
 
 on:
   push:
     tags:
-      - 'v*'  # 当你在当前仓库推送以 v 开头的 Tag 时触发（例如 v1.0.0）
+      - 'v*' 
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Current Repo (Dockerfile)
-        uses: actions/checkout@v4
-        with:
-          path: ./current-repo
-
       - name: Checkout lidge-jun/opencodex Repo
         uses: actions/checkout@v4
         with:
           repository: lidge-jun/opencodex
-          ref: 'dev'  # 动态匹配你当前打的 Tag，或者改为 'dev'
-          path: ./opencodex-src        # 存放到临时子目录中
-
+          ref: 'dev'
+          path: ./opencodex-src
       - name: Log in to the Container Registry
         uses: docker/login-action@v3
         with:
@@ -31,9 +29,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./opencodex-src/Dockerfile   
+          context: ./opencodex-src
+          file: ./opencodex-src/Dockerfile
+          target: runtime
           push: true
           tags: |
-            jackieonway/opencodex:${{ github.ref_name }}
-            jackieonway/opencodex:latest
+            ghcr.io/${{ github.repository_owner }}/opencodex:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/opencodex:latest
